@@ -1,0 +1,36 @@
+{
+  "mode": "debug",
+  "service_name": "audit-log-service",
+  "http_port": 3347,
+  "jwt_secret": "hdflaflafadslfjoasjflsa",
+  "db": {
+    "read": {
+      "host": "127.0.0.1",
+      "port": 5432,
+      "name": "audit_log_db",
+      "user": "postgres",
+      "pass": "foodipass",
+      "max_idle_time_in_minute": 60,
+      "enable_ssl_mode": false
+    },
+    "write": {
+      "host": "127.0.0.1",
+      "port": 5432,
+      "name": "audit_log_db",
+      "user": "postgres",
+      "pass": "foodipass",
+      "max_idle_time_in_minute": 60,
+      "enable_ssl_mode": false
+    }
+  },
+  "migrations": "migrations",
+  "rmq_reconnect_delay": 5,
+  "rmq_retry_interval": 600,
+  "rmq_url": "amqp://username:password@localhost:5672",
+  "rmq_queue_prefix": "audit-log-service:",
+  "grpc_urls": {
+    "user": "foodi-nlb-982dadba3346dcb8.elb.ap-southeast-1.amazonaws.com:8350"
+  },
+  "health_check_route": "/health",
+  "download_limit": 1000
+}
