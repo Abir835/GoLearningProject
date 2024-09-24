@@ -1,5 +1,16 @@
 package web
 
-import "net/http"
+import (
+	"go-learning-project/web/handlers"
+	"go-learning-project/web/middlewares"
+	"net/http"
+)
 
-func InitRoutes(mux *http.ServeMux) {}
+func InitRoutes(mux *http.ServeMux, manager *middlewares.Manager) {
+	mux.Handle(
+		"GET /books",
+		manager.With(
+			http.HandlerFunc(handlers.HealthCheck),
+		),
+	)
+}
