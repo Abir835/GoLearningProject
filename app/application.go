@@ -2,6 +2,7 @@ package app
 
 import (
 	"go-learning-project/config"
+	"go-learning-project/db"
 	"go-learning-project/web"
 	"go-learning-project/web/utils"
 	"sync"
@@ -17,6 +18,7 @@ func NewApplication() *Application {
 
 func (app *Application) Init() {
 	config.LoadConfig()
+	db.InitDB()
 	utils.InitValidator()
 }
 
