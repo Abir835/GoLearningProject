@@ -8,7 +8,7 @@ import (
 
 func InitRoutes(mux *http.ServeMux, manager *middlewares.Manager) {
 	mux.Handle(
-		"GET /books",
+		"GET /health-check",
 		manager.With(
 			http.HandlerFunc(handlers.HealthCheck),
 		),
