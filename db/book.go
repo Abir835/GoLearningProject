@@ -65,26 +65,37 @@ func (r *BookRepository) CreateBook(book *Book) (*Book, error) {
 	return &newBook, nil
 }
 
-func (r *BookRepository) GetAllBooks() ([]*Book, error) {
+func (r *BookRepository) GetAllBooks(limit, page int) ([]*Book, int, error) {
 	var books []*Book
+	var count int
+
+	offset := (page - 1) * limit
+
+	countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s", r.table)
+	err := GetReadDB().Get(&count, countQuery)
+	if err != nil {
+		fmt.Println("Failed to count books")
+		return nil, 0, err
+	}
 
 	query, args, err := GetQueryBuilder().
 		Select("*").
 		From(r.table).
 		OrderBy("name ASC").
+		Limit(uint64(limit)).
+		Offset(uint64(offset)).
 		ToSql()
 	if err != nil {
-		fmt.Println("Failed to create books")
-		return nil, err
+		fmt.Println("Failed to create books query")
+		return nil, 0, err
 	}
 
 	err = GetReadDB().Select(&books, query, args...)
 	if err != nil {
 		fmt.Println("Failed to get books")
-		return nil, err
+		return nil, 0, err
 	}
-	return books, nil
-
+	return books, count, nil
 }
 
 func (r *BookRepository) GetBookById(id string) (*Book, error) {

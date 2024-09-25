@@ -4,18 +4,45 @@ import (
 	"encoding/json"
 	"go-learning-project/db"
 	"go-learning-project/web/utils"
+	"math"
 	"net/http"
+	"strconv"
 )
 
 func GetBooks(w http.ResponseWriter, r *http.Request) {
-	books, err := db.GetBookRepo().GetAllBooks()
+	queryParams := r.URL.Query()
 
+	page := 1
+	limit := 25
+
+	if p := queryParams.Get("page"); p != "" {
+		if parsedPage, err := strconv.Atoi(p); err == nil {
+			page = parsedPage
+		}
+	}
+
+	if l := queryParams.Get("limit"); l != "" {
+		if parsedLimit, err := strconv.Atoi(l); err == nil {
+			limit = parsedLimit
+		}
+	}
+
+	books, count, err := db.GetBookRepo().GetAllBooks(limit, page)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, err.Error(), err)
 		return
 	}
 
-	utils.SendData(w, 200, books)
+	totalPages := int(math.Ceil(float64(count) / float64(limit)))
+
+	response := map[string]interface{}{
+		"data":        books,
+		"currentPage": page,
+		"totalCount":  count,
+		"totalPages":  totalPages,
+	}
+
+	utils.SendData(w, http.StatusOK, response)
 }
 
 func GetBookById(w http.ResponseWriter, r *http.Request) {
